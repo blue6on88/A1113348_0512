@@ -1,0 +1,113 @@
+import java.util.*;
+
+class CustomerBuy extends Thread{
+    A1113348_0512 b;
+    String name;
+    
+
+    public CustomerBuy(A1113348_0512 b, String name){
+        this.b = b;
+        this.name=name;
+    }
+    
+    public void run(){ //點餐一次
+
+        while(A1113348_0512.pork>=10 || A1113348_0512.beef>=10 || A1113348_0512.vegetable >=10){
+            int count = (int)(Math.random()*41)+10;
+            int type = (int)(Math.random()*3)+1;
+            b.reportCount(name, count, type); //回報點的人、水餃數量、總類
+        }
+
+    }
+}
+
+public class A1113348_0512 {
+    static int total = 9000;
+    static int pork = 5000;
+    static int beef = 3000;
+    static int vegetable = 1000;
+    static int number;
+    private CustomerBuy[] customer;
+    
+
+    public synchronized void reportCount(String name, int count, int type){
+
+        int temp = total;
+        int p =pork;
+        int b = beef;
+        int v = vegetable;
+
+        runloop1: if(type==1 && pork >=10){
+            p-=count;
+            if(p<=0){
+                break runloop1;
+            }
+            System.out.println(name+"點了"+count+"豬肉水餃");
+            System.out.println("目前豬肉水餃數為:"+p);
+            temp = temp-count;
+            System.out.println("目前總水餃數為:"+temp);
+            total = temp;
+            pork = p;
+            if(pork<10){
+                System.out.println("已無法繼續點豬肉水餃");
+            }
+        }
+        runloop2: if(type==2 && beef >=10){
+            b-=count;
+            if(b<=0){
+                break runloop2;
+            }
+            System.out.println(name+"點了"+count+"牛肉水餃");
+           
+            System.out.println("目前牛肉水餃數為:"+b);
+            temp = temp-count;
+            System.out.println("目前總水餃數為:"+temp);
+            total = temp;
+            beef=b;
+            if(beef<10){
+                System.out.println("已無法繼續點牛肉水餃");
+            }
+        }
+        runloop3: if(type==3 && vegetable >=10){
+            v-=count;
+            if(v<0){
+                break runloop3;
+            }
+            System.out.println(name+"點了"+count+"蔬菜水餃");
+            System.out.println("目前蔬菜水餃數為:"+v);
+            temp = temp-count;
+            System.out.println("目前總水餃數為:"+temp);
+            total = temp;
+            vegetable = v;
+            if(vegetable<10){
+                System.out.println("已無法繼續點蔬菜水餃");
+            }
+        }
+        try{
+                Thread.sleep(3000);
+        }
+        catch(InterruptedException e){}
+    }
+
+    public void startReport(){
+        customer = new CustomerBuy[number];
+
+        for(int i=1; i<=number;i++){
+            customer[i-1]=new CustomerBuy(this,i+"號客人");
+        }
+
+         for(int i=0;i<number;i++){
+             customer[i].start();
+         }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.print("請輸入顧客數目:");
+        Scanner sc = new Scanner(System.in);
+        number = sc.nextInt();
+
+        A1113348_0512 b = new A1113348_0512();
+        b.startReport();
+    }
+}
